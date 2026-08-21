@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pesquisa TCC — Judicialização da Coparticipação em TEA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3F5F2;
+    --paper-2:#EAEDE8;
+    --ink:#1C2622;
+    --ink-soft:#4A544E;
+    --line:#D6DBD3;
+    --green:#0B6E4F;
+    --green-soft:#E4EFE8;
+    --blue:#2B4C7E;
+    --blue-soft:#E6EAF2;
+    --amber:#8A5A2E;
+    --amber-soft:#F1E7DC;
+    --white:#FFFFFF;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:920px;margin:0 auto;padding:48px 24px 96px;}
+
+  /* Header */
+  .masthead{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:32px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);}
+  h1{font-family:'Source Serif 4',serif;font-weight:700;font-size:clamp(26px,4vw,36px);margin:8px 0 6px;letter-spacing:-.01em;}
+  .subtitle{font-size:14.5px;color:var(--ink-soft);max-width:640px;}
+
+  .notice{background:var(--white);border:1px solid var(--line);border-left:3px solid var(--green);padding:16px 18px;font-size:13.5px;color:var(--ink-soft);margin-bottom:40px;}
+  .notice strong{color:var(--ink);}
+
+  /* Eixo tabs */
+  .tabs{display:flex;gap:10px;margin-bottom:0;flex-wrap:wrap;}
+  .tab{
+    flex:1 1 260px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-bottom:none;
+    border-radius:var(--radius) var(--radius) 0 0;
+    padding:18px 18px 16px;
+    cursor:pointer;
+    position:relative;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .tab:hover{transform:translateY(-2px);}
+  .tab .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:inline-block;padding:2px 7px;border-radius:12px;margin-bottom:10px;}
+  .tab h3{font-family:'Source Serif 4',serif;font-size:17px;margin:0 0 6px;font-weight:600;}
+  .tab p{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .tab[data-eixo="atuarial"] .tag{background:var(--blue-soft);color:var(--blue);}
+  .tab[data-eixo="gestao"] .tag{background:var(--green-soft);color:var(--green);}
+  .tab[data-eixo="juridico"] .tag{background:var(--amber-soft);color:var(--amber);}
+  .tab.active{border-color:var(--ink);box-shadow:0 -3px 0 0 var(--accent) inset;}
+  .tab.active[data-eixo="atuarial"]{--accent:var(--blue);}
+  .tab.active[data-eixo="gestao"]{--accent:var(--green);}
+  .tab.active[data-eixo="juridico"]{--accent:var(--amber);}
+
+  .dossie{background:var(--white);border:1px solid var(--ink);padding:0;display:none;}
+  .dossie.show{display:block;}
+  .dossie-head{padding:22px 26px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .dossie-head h2{font-family:'Source Serif 4',serif;font-size:20px;margin:0;font-weight:600;}
+  .dossie-head .meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-soft);}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:22px 26px;border-bottom:1px solid var(--line);background:var(--paper-2);}
+  @media(max-width:680px){.field-row{grid-template-columns:1fr;}}
+  .field label{display:block;font-size:11.5px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:6px;}
+  .field input{width:100%;padding:9px 10px;border:1px solid var(--line);background:var(--white);font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--ink);border-radius:var(--radius);}
+  .field input:focus{outline:2px solid var(--ink);outline-offset:1px;}
+
+  .bloco{padding:24px 26px;border-bottom:1px solid var(--line);}
+  .bloco:last-of-type{border-bottom:none;}
+  .bloco-title{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);margin-bottom:14px;font-weight:500;}
+  .question{margin-bottom:18px;}
+  .question:last-child{margin-bottom:0;}
+  .question .qnum{font-family:'Source Serif 4',serif;font-weight:700;font-size:15px;color:var(--ink);}
+  .question p{font-size:14.5px;margin:4px 0 10px;color:var(--ink);}
+  .question textarea{width:100%;min-height:88px;padding:10px 12px;border:1px solid var(--line);background:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--ink);resize:vertical;border-radius:var(--radius);}
+  .question textarea:focus{outline:2px solid var(--ink);outline-offset:1px;background:var(--white);}
+
+  .submit-row{padding:22px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  button.submit{font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--paper);border:none;padding:13px 26px;cursor:pointer;border-radius:var(--radius);}
+  button.submit:hover{background:var(--green);}
+  button.submit:disabled{opacity:.5;cursor:not-allowed;}
+  .status{font-size:13px;}
+  .status.ok{color:var(--green);}
+  .status.err{color:#B3261E;}
+
+  .foot{margin-top:28px;font-size:12px;color:var(--ink-soft);text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="eyebrow">Trabalho de Conclusão de Curso · Apêndices C, D, E</div>
+    <h1>Judicialização da Coparticipação em Terapias para TEA</h1>
+    <div class="subtitle">Questionário de pesquisa aplicado a profissionais das áreas atuarial/financeira, gestão/administração e jurídico-corporativa de operadoras de planos de saúde.</div>
+  </div>
+
+  <div class="notice">
+    <strong>Sigilo e finalidade.</strong> Este formulário é composto exclusivamente por perguntas abertas, organizadas em três blocos temáticos, com tempo médio de preenchimento de 15 a 20 minutos. As respostas serão tratadas com sigilo e utilizadas exclusivamente para fins acadêmicos e científicos, conforme descrito no Termo de Consentimento Livre e Esclarecido (Apêndice A). Selecione abaixo a sua área de atuação para abrir o questionário correspondente.
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="dossies"></div>
+
+  <div class="foot">Apêndices C · D · E — questionário eletrônico de pesquisa acadêmica</div>
+</div>
+
+<script>
+// ======= URL do Apps Script (Web App) — cole aqui após publicar =======
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhgVyDiSR_ghUQsmd0yvQMDE3PaUVZfXupzUhjyVj-RXwMHaTdHeGdBwS108qujmab/exec";
+// ========================================================================
+
+const EIXOS = {
+  atuarial: {
+    label: "Atuarial e Financeiro",
+    tag: "Apêndice C",
+    accent: "var(--blue)",
+    blocos: [
+      {
+        title: "Bloco I — Impacto nas provisões e equilíbrio atuarial",
+        perguntas: [
+          "De que forma a concessão de liminares que mitigam ou eliminam o fator moderador (coparticipação) afeta o cálculo das provisões técnicas regulatórias exigidas pela ANS?",
+          "Com a neutralização prática da coparticipação por vias judiciais, foram identificados reflexos quantitativos que caracterizem o fenômeno econômico do risco moral (moral hazard) na sinistralidade de terapias especiais?"
+        ]
+      },
+      {
+        title: "Bloco II — Impacto no pacto mutualista e finanças",
+        perguntas: [
+          "Como a imprevisibilidade desses custos assistenciais de alta intensidade repercute no princípio do mutualismo?",
+          "Como a área financeira e atuarial mensura a diferença de custo médio por paciente entre o atendimento realizado via rede credenciada aberta versus o modelo verticalizado próprio da instituição?"
+        ]
+      },
+      {
+        title: "Bloco III — Precificação e viabilidade de contratos",
+        perguntas: [
+          "Diante do cenário observado entre 2023 e 2025, de que forma essa variação na sinistralidade pressiona os indicadores de reajuste das apólices coletivas empresariais e individuais?"
+        ]
+      }
+    ]
+  },
+  gestao: {
+    label: "Gestão e Administração",
+    tag: "Apêndice D",
+    accent: "var(--green)",
+    blocos: [
+      {
+        title: "Bloco I — Contexto regulatório e operacional (2023–2025)",
+        perguntas: [
+          "De que maneira a administração da cooperativa absorveu o impacto operacional imediato das normativas da ANS que extinguiram os limites de sessões terapêuticas para o tratamento do TEA?",
+          "Como tem sido o fluxo e as estratégias internas para lidar com o volume crescente de ordens judiciais que determinam a limitação ou eliminação das taxas de coparticipação?"
+        ]
+      },
+      {
+        title: "Bloco II — Modelos de gestão assistencial e verticalização",
+        perguntas: [
+          "Qual é a avaliação da gerência/diretoria em relação à eficácia do modelo de verticalização (implantação de redes ou clínicas próprias em neurodesenvolvimento) como barreira de contenção de custos assistenciais?",
+          "De que forma a cooperativa atua na auditoria e no monitoramento concorrente dos Planos Terapêuticos Singulares (PTS) para assegurar a aplicação da Medicina Baseada em Evidências (MBE) sem gerar sobrecarga de custos unitários?"
+        ]
+      },
+      {
+        title: "Bloco III — Sustentabilidade do modelo cooperativista",
+        perguntas: [
+          "Sob a ótica da gestão executiva, quais diretrizes estratégicas de longo prazo são necessárias para garantir o acolhimento humanizado dos beneficiários com TEA e, simultaneamente, preservar a viabilidade mercadológica da cooperativa?"
+        ]
+      }
+    ]
+  },
+  juridico: {
+    label: "Jurídico-Corporativo",
+    tag: "Apêndice E",
+    accent: "var(--amber)",
+    blocos: [
+      {
+        title: "Bloco I — Perfil da litigiosidade e argumentação da defesa",
+        perguntas: [
+          "Quais são as principais teses jurídicas levantadas pelos beneficiários nas ações que pleiteiam a suspensão da coparticipação para tratamentos multidisciplinares baseados no método ABA?",
+          "Ao estruturar as peças de contestação e recursos, a equipe jurídica fundamenta as teses na Análise Econômica do Direito (AED), no impacto coletivo e no risco de desestruturação sistêmica do fundo mútuo?"
+        ]
+      },
+      {
+        title: "Bloco II — Interação com o Judiciário e alinhamento técnico",
+        perguntas: [
+          "Qual tem sido o nível de sensibilidade e receptividade dos magistrados locais perante os argumentos de cunho estritamente matemático e atuarial apresentados pela operadora?",
+          "Como o departamento jurídico tem absorvido e aplicado os precedentes e acórdãos recentes do Superior Tribunal de Justiça (STJ) que abordam as balizas de equilíbrio econômico em terapias especiais?"
+        ]
+      },
+      {
+        title: "Bloco III — Soluções estratégicas intersetoriais",
+        perguntas: [
+          "Existe uma atuação conjunta entre o setor jurídico e as áreas estratégicas da operadora para propor soluções resolutivas extrajudiciais, como o direcionamento obrigatório à rede própria verticalizada para conter os custos com clínicas credenciadas?"
+        ]
+      }
+    ]
+  }
+};
+
+const tabsEl = document.getElementById('tabs');
+const dossiesEl = document.getElementById('dossies');
+
+function todayISO(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+Object.entries(EIXOS).forEach(([key, eixo]) => {
+  // Tab
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.dataset.eixo = key;
+  tab.innerHTML = `
+    <span class="tag">${eixo.tag}</span>
+    <h3>${eixo.label}</h3>
+    <p>${eixo.blocos.reduce((n,b)=>n+b.perguntas.length,0)} perguntas · 3 blocos</p>
+  `;
+  tab.addEventListener('click', () => selectEixo(key));
+  tabsEl.appendChild(tab);
+
+  // Dossiê (form panel)
+  const dossie = document.createElement('div');
+  dossie.className = 'dossie';
+  dossie.id = 'dossie-' + key;
+  dossie.style.setProperty('--accent', eixo.accent);
+
+  let blocosHTML = '';
+  let qCounter = 0;
+  eixo.blocos.forEach((bloco, bi) => {
+    let perguntasHTML = '';
+    bloco.perguntas.forEach(p => {
+      qCounter++;
+      perguntasHTML += `
+        <div class="question">
+          <span class="qnum">${String(qCounter).padStart(2,'0')}</span>
+          <p>${p}</p>
+          <textarea name="q${qCounter}" data-pergunta="${p.replace(/"/g,'&quot;')}" placeholder="Sua resposta..."></textarea>
+        </div>`;
+    });
+    blocosHTML += `
+      <div class="bloco">
+        <div class="bloco-title">${bloco.title}</div>
+        ${perguntasHTML}
+      </div>`;
+  });
+
+  dossie.innerHTML = `
+    <div class="dossie-head">
+      <h2>${eixo.label}</h2>
+      <span class="meta">${eixo.tag} · ${qCounter} perguntas</span>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Profissional (cargo/função)</label>
+        <input type="text" class="f-profissional" placeholder="Ex.: Analista de Suprimentos">
+      </div>
+      <div class="field">
+        <label>Data de preenchimento</label>
+        <input type="date" class="f-data" value="${todayISO()}">
+      </div>
+      <div class="field">
+        <label>Tempo de atuação no setor</label>
+        <input type="text" class="f-tempo" placeholder="Ex.: 5 anos">
+      </div>
+    </div>
+    ${blocosHTML}
+    <div class="submit-row">
+      <button class="submit" data-eixo="${key}">Enviar respostas</button>
+      <span class="status" data-status="${key}"></span>
+    </div>
+  `;
+  dossiesEl.appendChild(dossie);
+});
+
+function selectEixo(key){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.eixo === key));
+  document.querySelectorAll('.dossie').forEach(d => d.classList.toggle('show', d.id === 'dossie-' + key));
+  document.getElementById('dossie-' + key).scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+document.querySelectorAll('button.submit').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const key = btn.dataset.eixo;
+    const eixo = EIXOS[key];
+    const dossie = document.getElementById('dossie-' + key);
+    const statusEl = dossie.querySelector('[data-status="'+key+'"]');
+
+    const profissional = dossie.querySelector('.f-profissional').value.trim();
+    const data = dossie.querySelector('.f-data').value;
+    const tempo = dossie.querySelector('.f-tempo').value.trim();
+
+    if(!profissional){
+      statusEl.textContent = 'Preencha o campo "Profissional (cargo/função)".';
+      statusEl.className = 'status err';
+      dossie.querySelector('.f-profissional').focus();
+      return;
+    }
+
+    const perguntas = [];
+    dossie.querySelectorAll('textarea').forEach(ta => {
+      perguntas.push({ pergunta: ta.dataset.pergunta, resposta: ta.value.trim() });
+    });
+
+    if(!SCRIPT_URL || SCRIPT_URL.indexOf('COLE_AQUI') !== -1){
+      statusEl.textContent = 'URL do Apps Script não configurada (veja instruções no código).';
+      statusEl.className = 'status err';
+      return;
+    }
+
+    btn.disabled = true;
+    statusEl.textContent = 'Enviando...';
+    statusEl.className = 'status';
+
+    try{
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          eixo: eixo.label,
+          profissional: profissional,
+          dataPreenchimento: data,
+          tempoAtuacao: tempo,
+          perguntas: perguntas
+        })
+      });
+      statusEl.textContent = 'Respostas enviadas. Obrigado pela participação.';
+      statusEl.className = 'status ok';
+      dossie.querySelectorAll('textarea').forEach(ta => ta.value = '');
+      dossie.querySelector('.f-profissional').value = '';
+      dossie.querySelector('.f-tempo').value = '';
+    }catch(err){
+      statusEl.textContent = 'Falha no envio. Verifique a conexão e tente novamente.';
+      statusEl.className = 'status err';
+    }finally{
+      btn.disabled = false;
+    }
+  });
+});
+
+// Abre o primeiro eixo por padrão
+selectEixo('atuarial');
+</script>
+</body>
+</html>
